@@ -6,7 +6,7 @@ import cx_Oracle
 import isbnlib
 
 def getOracleConnection():
-    conn=cx_Oracle.connect("chuban/chuban@117.50.43.176/orcl")
+    conn=cx_Oracle.connect("chuban/chuban@localhost/orcl")
     return conn
 
 
