@@ -6,7 +6,7 @@ import cx_Oracle
 import isbnlib
 
 def getOracleConnection():
-    conn=cx_Oracle.connect("chuban/chuban@localhost/orcl")
+    conn=cx_Oracle.connect("chuban/chuban@117.50.43.176/orcl")
     return conn
 
 
@@ -38,13 +38,13 @@ def getCodeAndNameList(conn):
 
 def getBookInfoFromDouban(isbn):
     resultDict=dict()
-    req=requests.get("https://api.douban.com/v2/book/isbn/:"+isbn)
+    req=requests.post("https://api.douban.com/v2/book/isbn/:"+isbn)
     if req.status_code==requests.codes.ok:
         bookInfo=req.content.decode('utf-8')
         bookJson=json.loads(bookInfo)
         resultDict['author']=(',').join(bookJson['author'])
         resultDict['pubdate']=bookJson['pubdate']
-        resultDict['tags']=','.join(bookJson['tags'])
+#        resultDict['tags']=','.join(bookJson['tags'])
         resultDict['origin_title']=bookJson['origin_title']
         resultDict['binding']=bookJson['binding']
         resultDict['translator']=','.join(bookJson['translator'])
@@ -64,8 +64,13 @@ def getBookInfoFromDouban(isbn):
 if __name__=='__main__':
 #    info=getBookInfoFromDouban('9787111128069')
     conn=getOracleConnection()
-    codeNameList=getCodeAndNameList()
+    print("connect tion done")
+    codeNameList=getCodeAndNameList(conn)
+    print("get list done")
+    cnt=0
     for eachCodeName in codeNameList:
         doubanInfo=getBookInfoFromDouban(getISBN(eachCodeName[0]))
+        print("process one book"+eachCodeName[0])
         if doubanInfo != None:
-            print(doubanInfo)
+            cnt+=1
+    print("douban 找到%d本书的信息"%(cnt))
