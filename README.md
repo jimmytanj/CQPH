@@ -1,2 +1,1 @@
-# PDFProcess
-used to process pdf files in cqph
+CQPH Related Python Scripts
